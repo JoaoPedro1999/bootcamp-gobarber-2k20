@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import nodemailer, { Transporter } from 'nodemailer';
 import { inject, injectable } from 'tsyringe';
 import IMailProvider from '../models/IMailProvider';

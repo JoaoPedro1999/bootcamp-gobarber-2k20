@@ -4,7 +4,7 @@ import { classToClass } from 'class-transformer';
 
 import UpdateUserAvatarService from '@modules/users/services/UpdateUserAvatarService';
 
-export default class SessionsController {
+export default class UserAvatarController {
   public async update(request: Request, response: Response): Promise<Response> {
     const user_id = request.user.id;
     const { filename } = request.file;

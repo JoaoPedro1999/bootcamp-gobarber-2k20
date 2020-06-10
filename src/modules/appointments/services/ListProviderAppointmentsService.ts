@@ -2,6 +2,7 @@ import 'reflect-metadata';
 import { injectable, inject } from 'tsyringe';
 
 import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
+import { classToClass } from 'class-transformer';
 import IAppointmentsRepository from '../repositories/IAppointmentsRepository';
 import Appointment from '../infra/typeorm/entities/Appointments';
 
@@ -44,7 +45,9 @@ class ListProviderAppointmentsService {
         },
       );
 
-      await this.cacheProvider.save(cacheKey, appointments);
+      const appointmentsWithoutPassword = classToClass(appointments);
+
+      await this.cacheProvider.save(cacheKey, appointmentsWithoutPassword);
     }
 
     return appointments;
