@@ -1,20 +1,24 @@
 import AppError from '@shared/errors/AppError';
 import FakeNotificationsRepository from '@modules/notifications/repositories/fakes/FakeNotificationsRepository';
-import CreateAppoitmentService from './CreateAppoitmentService';
+import FakeCacheProvider from '@shared/container/providers/CacheProvider/fakes/FakeCacheProvider';
+import CreateAppointmentService from './CreateAppointmentService';
 import FakeAppointmentsRepository from '../repositories/fakes/FakeAppointmentsRepository';
 
 let fakeAppointmentsRepository: FakeAppointmentsRepository;
-let createAppoitmentService: CreateAppoitmentService;
+let createAppointmentService: CreateAppointmentService;
 let fakeNotificationsRepository: FakeNotificationsRepository;
+let fakeCacheProvider: FakeCacheProvider;
 
 describe('CreateAppoitment', () => {
   beforeEach(() => {
     fakeAppointmentsRepository = new FakeAppointmentsRepository();
     fakeNotificationsRepository = new FakeNotificationsRepository();
+    fakeCacheProvider = new FakeCacheProvider();
 
-    createAppoitmentService = new CreateAppoitmentService(
+    createAppointmentService = new CreateAppointmentService(
       fakeAppointmentsRepository,
       fakeNotificationsRepository,
+      fakeCacheProvider,
     );
   });
 
@@ -23,7 +27,7 @@ describe('CreateAppoitment', () => {
       return new Date(2020, 4, 10, 12).getTime();
     });
 
-    const appointment = await createAppoitmentService.execute({
+    const appointment = await createAppointmentService.execute({
       date: new Date(2020, 4, 10, 13),
       user_id: '123123',
       provider_id: '122848184891658sd4f',
@@ -34,19 +38,19 @@ describe('CreateAppoitment', () => {
   });
 
   it('should not be able to create two appointment on the same time', async () => {
-    const appointmentDate = new Date(2020, 5, 6, 11, 20);
+    const appointmentDate = new Date(2060, 4, 12, 11);
 
-    await createAppoitmentService.execute({
+    await createAppointmentService.execute({
       date: appointmentDate,
-      user_id: '123123',
-      provider_id: '123123123',
+      user_id: 'userLogged',
+      provider_id: '12321312',
     });
 
     await expect(
-      createAppoitmentService.execute({
+      createAppointmentService.execute({
         date: appointmentDate,
-        user_id: '123123',
-        provider_id: '123123123',
+        user_id: 'userLogged',
+        provider_id: '12321312',
       }),
     ).rejects.toBeInstanceOf(AppError);
   });
@@ -57,7 +61,7 @@ describe('CreateAppoitment', () => {
     });
 
     await expect(
-      createAppoitmentService.execute({
+      createAppointmentService.execute({
         date: new Date(2020, 4, 10, 11),
         user_id: '123123',
         provider_id: '123123123',
@@ -71,7 +75,7 @@ describe('CreateAppoitment', () => {
     });
 
     await expect(
-      createAppoitmentService.execute({
+      createAppointmentService.execute({
         date: new Date(2020, 4, 10, 13),
         user_id: '123123',
         provider_id: '123123',
@@ -85,7 +89,7 @@ describe('CreateAppoitment', () => {
     });
 
     await expect(
-      createAppoitmentService.execute({
+      createAppointmentService.execute({
         date: new Date(2020, 4, 10, 7),
         user_id: '123123',
         provider_id: '123123123',
@@ -93,7 +97,7 @@ describe('CreateAppoitment', () => {
     ).rejects.toBeInstanceOf(AppError);
 
     await expect(
-      createAppoitmentService.execute({
+      createAppointmentService.execute({
         date: new Date(2020, 4, 10, 18),
         user_id: '123123',
         provider_id: '123123',
